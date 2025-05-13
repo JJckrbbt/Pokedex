@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	papi "github.com/jjckrbbt/pokedex/internal/pokeapi"
 	pcache "github.com/jjckrbbt/pokedex/internal/pokecache"
 	"os"
 	"strings"
@@ -14,6 +15,8 @@ func startRepl() {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	cache := pcache.NewCache(5 * time.Second)
+
+	cfg.Collection = make(map[string]papi.Pokemon)
 
 	for {
 		if cfg.Next == "" {
@@ -59,8 +62,9 @@ type cliCommand struct {
 }
 
 type config struct {
-	Next     string
-	Previous string
+	Next       string
+	Previous   string
+	Collection map[string]papi.Pokemon
 }
 
 var cfg config
@@ -81,6 +85,21 @@ func getCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "Returns a list of Pokemon",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Try to catch a Pokemon",
+			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Displays a Pokemon's stats",
+			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Displays list of caught Pokemon",
+			callback:    commandPokedex,
 		},
 		"help": {
 			name:        "help",
